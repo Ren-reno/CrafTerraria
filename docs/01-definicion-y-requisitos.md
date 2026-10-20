@@ -2,7 +2,7 @@
 
 > Nombre de la app: **CrafTerraria**. Barra superior con solo texto (sin ícono), definido el 2026-08-17.
 
-> Documento vivo. Se va completando a medida que avanza el proceso de desarrollo. Última actualización: 2026-10-19.
+> Documento vivo. Se va completando a medida que avanza el proceso de desarrollo. Última actualización: 2026-10-20.
 
 ## 1. Descripción del proyecto
 
@@ -107,7 +107,7 @@ src/
 ```
 
 ### Capa de acceso a datos
-Se crea una capa de servicio (ej: `dataService.js`) con funciones como `getItemById()`, `getRecipesByItem()`, `getUsedIn()`, en vez de que cada componente importe el JSON directamente.
+Se crea una capa de servicio (ej: `dataService.js`) con funciones como `getItemById()`, `getRecipesByItem()`, `getUsedIn()`, `getItemImageUrl()`, en vez de que cada componente importe el JSON directamente.
 
 Motivo: aísla en un solo lugar la lógica de cálculo del índice inverso (RF10) y, si en el futuro se reemplaza el JSON estático por una API real, solo se modifica esta capa sin tocar los componentes.
 
@@ -207,6 +207,15 @@ Recomendación de implementación: obtener los nombres siempre a través de la c
 
 **Idioma:** v1 íntegramente en inglés (decidido el 2026-10-19). La traducción al español queda para v2.
 
+**Imágenes (decidido el 2026-10-20):** los íconos se **enlazan directo desde la wiki** usando `imageUrl` / `resultImageUrl`; **no se copian al repositorio**. Motivo: la wiki indica que los materiales de Terraria son propiedad de Re-Logic y que la licencia de gráficos se define por archivo; los archivos con arte del juego que se revisaron figuran como "In Copyright" (usados por la wiki con permiso), y ese permiso no se transfiere a terceros, así que no se redistribuyen. Reglas de implementación:
+- Todas las imágenes salen de una sola función (`getItemImageUrl(item)`), para poder cambiar el origen sin tocar componentes.
+- Imagen de respaldo genérica si una URL falla (ya hay casos reales: "Trusty Chillet" y "Trusty Chillet Ignis" dan 404).
+- Carga diferida (`loading="lazy"`) y paginación del listado, para no pedirle miles de imágenes de golpe a un servidor ajeno.
+- No hacer commit de imágenes al repositorio.
+- Atribución visible en el pie de la app, en inglés. Texto sugerido: *"Item data from the Official Terraria Wiki (CC BY-NC-SA 4.0). Item icons are loaded from the wiki and belong to Re-Logic. Terraria is © Re-Logic. Unofficial fan project, non-commercial."*
+
+Sin confirmar todavía: la licencia exacta de un ícono de ítem puntual, la existencia de una política de Re-Logic para proyectos de fans, y que wiki.gg no bloquee ni limite el enlace directo (se comprueba al construir la pantalla de Detalle, cargando los íconos desde `localhost` y desde el dominio publicado).
+
 ## 9. Próximos pasos
 
 - [x] Revisar repo de GitHub con datos de items/recetas — descartados por desactualizados, se optó por extracción propia
@@ -231,7 +240,10 @@ Recomendación de implementación: obtener los nombres siempre a través de la c
   - Frame 2 (Detalle de ítem) existe solo como wireframe de baja fidelidad (estructura validada contra RF01-RF10), sin estilo real aplicado todavía.
 - [ ] Pasar a inglés los textos de los diseños (ej. "Ordenar por: Rareza / Daño" → "Sort by: Rarity / Damage"), ahora que la v1 es íntegramente en inglés
 - [ ] Mockup de alta fidelidad de Detalle de ítem, heredando el mismo lenguaje visual
-- [ ] Buscar assets reales: sprites de ítems (ya se tiene `imageUrl` real por ítem desde la wiki) o pack de iconos pixel-art genérico si se prefiere no depender de assets de Re-Logic
+- [x] Decidir origen de las imágenes: enlazar directo desde la wiki (2026-10-20), ver sección 8
+- [ ] Implementar `getItemImageUrl()`, imagen de respaldo genérica, carga diferida y atribución en el pie de la app
+- [ ] Comprobar que los íconos cargan desde `localhost` y desde el dominio publicado (sin bloqueo de la wiki)
+- [ ] Antes de publicar: abrir la ficha de un archivo de ícono en la wiki (ej. `File:Iron Pickaxe.png`) y confirmar su plantilla de licencia
 - [ ] Buscar/crear texturas tileables genéricas (piedra, madera) optimizadas (.webp, comprimidas) para fondo — cuidando RNF01 (carga rápida)
 
 ## 10. Notas de referencia visual
@@ -267,3 +279,4 @@ Se generaron mockups de inspiración con IA (no assets finales) para definir dir
 | 2026-10-19 | Las rutas de ítem usan el `id`, no un slug: hay 7 nombres repetidos entre ítems distintos |
 | 2026-10-19 | Datos re-extraídos el 2026-10-15: 6141 ítems, 3942 recetas, 36 tests. `items.json` suma `name`, `damageType` y `defense`; el `id` de receta pasa a ser estable (`{resultItemId}-{n}`); `ingredient_categories.json` es parte de los datos que consume la app |
 | 2026-10-19 | Repo de la app creado: https://github.com/Ren-reno/CrafTerraria (código bajo MIT; datos bajo CC BY-NC-SA 4.0 con atribución al repo de datos) |
+| 2026-10-20 | **Imágenes: se enlazan directo desde la wiki** (`imageUrl`), sin copiarlas al repo, con imagen de respaldo, carga diferida y atribución visible. Motivo: el arte del juego es propiedad de Re-Logic (los archivos revisados figuran "In Copyright" en la wiki) y no se redistribuye. Pendiente confirmar la licencia de un ícono puntual y que la wiki no bloquee el enlace directo |

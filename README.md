@@ -10,7 +10,7 @@ Los datos (`items.json` y `recipes.json`) los genera un pipeline propio, que viv
 
 ## Atribución
 
-Los datos provienen de la [Official Terraria Wiki](https://terraria.wiki.gg/) y se distribuyen bajo CC BY-NC-SA 4.0, según se detalla en el [`ATTRIBUTION.md`](https://github.com/Ren-reno/terraria-crafting-data-pipeline/blob/main/ATTRIBUTION.md) del repositorio de datos. Terraria es propiedad de Re-Logic; este es un proyecto no oficial, hecho por fans y sin fines comerciales.
+Los datos provienen de la [Official Terraria Wiki](https://terraria.wiki.gg/) y se distribuyen bajo CC BY-NC-SA 4.0, según se detalla en el [`ATTRIBUTION.md`](https://github.com/Ren-reno/terraria-crafting-data-pipeline/blob/main/ATTRIBUTION.md) del repositorio de datos. Los íconos de ítems se cargan directamente desde la wiki y no se almacenan en este repositorio. Terraria es propiedad de Re-Logic; este es un proyecto no oficial, hecho por fans y sin fines comerciales.
 
 ## Licencia
 
