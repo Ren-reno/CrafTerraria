@@ -2,11 +2,11 @@
 
 > Nombre de la app: **CrafTerraria**. Barra superior con solo texto (sin ícono), definido el 2026-08-17.
 
-> Documento vivo. Se va completando a medida que avanza el proceso de desarrollo.
+> Documento vivo. Se va completando a medida que avanza el proceso de desarrollo. Última actualización: 2026-10-19.
 
 ## 1. Descripción del proyecto
 
-App web que permite consultar recetas de crafteo de Terraria en español. El usuario puede:
+App web, íntegramente en inglés, que permite consultar recetas de crafteo de Terraria. El usuario puede:
 - Buscar un ítem y ver con qué se craftea (ingredientes + estación requerida).
 - Explorar todos los ítems del juego organizados por categorías.
 
@@ -20,7 +20,7 @@ Proyecto con fines de portafolio, en el marco de la carrera técnica de Analista
 - Listado de todos los ítems crafteables del juego, agrupados por categoría
 - Filtro/navegación por categoría
 - Ordenar/filtrar listado por daño (solo aplica a categorías con daño, ej. Armas) y por rareza (aplica a todos los ítems)
-- Datos en español (nombres oficiales del juego)
+- Interfaz y datos en inglés (nombres de ítems tal como los publica la wiki oficial)
 - Diseño responsive dentro del rango de tamaños de celular (mobile-first; distintos anchos/alturas de móvil, no desktop)
 
 ### Fuera del alcance (v1)
@@ -29,23 +29,24 @@ Proyecto con fines de portafolio, en el marco de la carrera técnica de Analista
 - Calculadora de materiales base (recetas anidadas/recursivas) → candidato a v2
 - Búsqueda por imagen
 - Modo multijugador/colaborativo
-- Otros idiomas además de español
+- Otros idiomas además de inglés (el español es candidato a v2, ver Roadmap v2)
 - Otras mecánicas del juego no relacionadas a crafteo (bosses, biomas, NPCs)
 - **Soporte desktop** → v1 es 100% mobile, desktop pasa completo a v2 (ver Roadmap v2)
 
 ### Riesgo identificado
-Cubrir todos los ítems crafteables implica un volumen alto de datos a curar/traducir (Terraria tiene miles de ítems). Se abordará con una estrategia de carga progresiva/por lotes en la etapa de implementación, no de una sola vez.
+Cubrir todos los ítems crafteables implica un volumen alto de datos (Terraria tiene miles de ítems). Se abordará con una estrategia de carga progresiva/por lotes en la etapa de implementación, no de una sola vez.
 
 ### Roadmap v2 (ideas, no comprometidas — no diseñar en detalle hasta llegar ahí)
 - **Soporte desktop real**: v1 es mobile-first; desktop se agrega vía media queries adicionales sobre la misma base (bajo esfuerzo, ya lo habilita RNF05). Un layout desktop *estructuralmente distinto* (ej. panel de detalle sin cambiar de pantalla) sí sería trabajo nuevo, no solo CSS.
 - **Backend de usuario**: favoritos, builds guardadas, sesión/login. La capa de acceso a datos (sección 6) ya está pensada para que esto no requiera tocar componentes de v1, solo cambiar la implementación interna de las funciones de datos.
 - **Backend de contenido**: actualizar items/recetas automáticamente ante nuevas versiones del juego, reutilizando el pipeline Python ya publicado (`extract.py`/`process.py`) como job periódico en vez de corrida manual.
+- **Español**: nombres oficiales del juego (no traducción literal), con un diccionario separado por idioma (ver sección 7, "Idioma y traducción"). La fuente de los nombres está por definir.
 
 ## 3. Stack tecnológico
 
 - **Frontend:** React JS
 - **Datos:** JSON estático local (sin backend)
-- **Idioma:** Español (con nombres oficiales del juego, no traducción literal)
+- **Idioma:** Inglés (interfaz y nombres de ítems, tal como vienen de la wiki oficial). Español → v2 (ver Roadmap v2)
 
 ## 4. Requisitos funcionales
 
@@ -73,7 +74,7 @@ Cubrir todos los ítems crafteables implica un volumen alto de datos a curar/tra
 | RNF01 | La búsqueda debe responder de forma percibida como instantánea (dato local en memoria, sin llamadas a red) |
 | RNF02 | El código debe ser mantenible y estar documentado (componentes claros, README, comentarios donde aporte) — clave para portafolio |
 | RNF03 | La interfaz debe ofrecer buena UI/UX: navegación intuitiva, feedback visual claro, diseño coherente |
-| RNF04 | La app debe tener rutas propias por ítem y por categoría (URLs compartibles, ej: `/item/piqueta-de-hierro`) |
+| RNF04 | La app debe tener rutas propias por ítem y por categoría (URLs compartibles, ej: `/item/1`). Las rutas de ítem usan el `id`, no el nombre: hay 7 nombres repetidos entre ítems distintos |
 | RNF05 | El diseño debe priorizar la experiencia en móvil (mobile-first) en orientación vertical (portrait). Desktop queda fuera de v1 por completo (ver Alcance y Roadmap v2) — no es "después dentro de v1", es otra versión |
 
 ## 6. Arquitectura de la aplicación
@@ -83,7 +84,7 @@ React Router. Se descarta SPA de una sola vista porque:
 - Permite URLs directas y compartibles por ítem/categoría (mejor UX y SEO)
 - Evita perder el estado de navegación al recargar
 - Es el estándar de la industria — relevante para portafolio y futuras entrevistas
-- Curva de entrada razonable para rutas simples (`/item/:id`, `/categoria/:nombre`)
+- Curva de entrada razonable para rutas simples (`/item/:id`, `/category/:name`)
 
 ### Tipo de arquitectura
 Frontend puro basado en componentes, con datos estáticos locales (sin backend propio):
@@ -98,7 +99,7 @@ Frontend puro basado en componentes, con datos estáticos locales (sin backend p
 src/
 ├── components/       → piezas de UI reutilizables (Button, SearchBar, ItemCard)
 ├── pages/             → una por ruta (Home, ItemDetail, CategoryView)
-├── data/              → items.json, recipes.json, i18n/es.json
+├── data/              → items.json, recipes.json, ingredient_categories.json (copiados del repo de datos)
 ├── hooks/             → lógica reutilizable (useSearch, useRecipe)
 ├── utils/             → funciones puras (ej: construir el índice "usado para")
 ├── router/            → configuración de React Router
@@ -117,7 +118,7 @@ Motivo: aísla en un solo lugar la lógica de cálculo del índice inverso (RF10
 Separa "qué hace la app" de "cómo se ve".
 
 ### Manejo de estado
-React state nativo (`useState`, `useContext` si se necesita para idioma/tema). No se usa Redux ni librerías externas de estado: con datos estáticos y sin autenticación, el estado nativo de React es suficiente y evita sobre-ingeniería.
+React state nativo (`useState`, `useContext` si se necesita para tema). No se usa Redux ni librerías externas de estado: con datos estáticos y sin autenticación, el estado nativo de React es suficiente y evita sobre-ingeniería.
 
 ## 7. Modelo de datos
 
@@ -125,58 +126,63 @@ React state nativo (`useState`, `useContext` si se necesita para idioma/tema). N
 | Campo | Tipo | Descripción |
 |---|---|---|
 | id | number | Identificador único interno (confirmado con datos reales: es numérico, ej. `1`, no `"1"`) |
-| category | string | Categoría (Herramientas, Armas, Bloques, etc.) |
-| subcategory | string (opcional) | Subcategoría |
-| imageUrl | string | Ruta/URL del ícono |
-| rarity | number | Nivel de rareza (valor numérico ordenable, ej: 0=Blanco, 1=Azul, 2=Verde... según escala oficial del juego) |
-| damage | number (opcional) | Daño del ítem. Solo presente en categorías donde aplica (ej. Armas). Ausente/null en el resto |
+| name | string | Nombre del ítem en inglés, tal como lo publica la wiki oficial. **No es único** (7 nombres se repiten entre ids distintos): no usarlo como clave ni en URLs |
+| category | string (puede ser `null`) | Categoría tal como viene de la wiki: en inglés y minúscula, unas 36 (ej. `furniture`, `weapon`, `armor`, `tool`, `block`). La UI define la etiqueta a mostrar. `null` en 106 ítems (ver casos especiales) |
+| subcategory | string (puede ser `null`) | Subcategoría (`null` en la mayoría de los ítems) |
+| imageUrl | string | URL del ícono (presente en todos los ítems de los datos actuales) |
+| rarity | number o `"quest"` | Nivel de rareza, ordenable según la escala oficial del juego. Los datos incluyen valores negativos (`-1`, `-12`, `-13`) además de `0` a `10`; `"quest"` en 45 ítems y `null` en 1 ítem |
+| damage | number (opcional) | Daño del ítem. Solo presente en categorías donde aplica (ej. Armas). Ausente en el resto |
+| damageType | string (opcional) | Tipo de daño: `Melee`, `Ranged`, `Magic` o `Summon`. Solo en ítems que lo tienen |
+| defense | number (opcional) | Defensa (ej. armaduras). Ausente en el resto |
 | sellValue | number (opcional) | Valor de venta |
 
-> El nombre (`name`) NO vive en Item — se resuelve desde el diccionario de traducción por `id`. Ver sección "Traducción".
+> Desde la re-extracción del 2026-10-15, el nombre (`name`, en inglés) vive en `items.json`. El diseño anterior (diccionario de traducción aparte, sin `name` en Item) pasa a v2. Ver sección "Idioma y traducción".
 
 **Casos especiales confirmados con datos reales (a decidir en etapa de diseño/desarrollo):**
 - 45 ítems (peces de misión) traen `rarity: "quest"` (string) en vez de número — rompe el supuesto de orden numérico de RF11, necesitan tratamiento aparte al ordenar.
-- 107 ítems traen `category: null` (la wiki no les asignó tipo). De esos, solo 7 son crafteables — bajo impacto, pero la UI necesita una categoría de respaldo tipo "Otros".
+- 106 ítems traen `category: null` (la wiki no les asignó tipo). De esos, solo 8 son crafteables — bajo impacto, pero la UI necesita una categoría de respaldo tipo "Other".
+- 1 ítem trae `rarity: null` y algunos traen valores negativos (`-1`, `-12`, `-13`): RF11 debe decidir dónde ubicarlos al ordenar.
 
 **Nota sobre RF11-RF12:** `rarity` se vuelve numérico (no texto libre) para poder ordenar directamente. `damage` es opcional porque no todas las categorías lo tienen — la UI debe mostrar el control de orden por daño solo cuando la categoría/selección actual tenga ítems con ese campo presente.
 
 ### Entidad: Recipe
 | Campo | Tipo | Descripción |
 |---|---|---|
-| id | string | Identificador único de la receta |
+| id | string | Identificador único y **estable** de la receta, con formato `{resultItemId}-{n}` (`n` = posición entre las recetas de ese ítem, ordenadas por contenido). Sirve como clave (React `key`, favoritos futuros); solo cambia si cambian las recetas de ese mismo ítem |
 | resultItemId | number | Referencia al Item producido |
 | resultQuantity | number | Cantidad producida |
-| ingredients | array | Lista de `{ itemId, quantity }`. Si el ingrediente es un grupo tipo "Cualquier X" sin un ítem único (ej. "Any Iron Bar"), `itemId` es `null` y se agrega `categoryHint` (string) con el nombre del grupo |
+| ingredients | array | Lista de `{ itemId, quantity }`. Si el ingrediente es un grupo tipo "Any X" sin un ítem único (ej. "Any Iron Bar"), `itemId` es `null` y se agrega `categoryHint` (string) con el nombre del grupo; los ids de cada grupo están en `ingredient_categories.json` (ej. `"Any Iron Bar": [22, 704]`) |
 | station | array de string \| null | Estación(es) requerida(s) — mueble real craftable (ej. "Iron Anvil") |
 | requiredCondition | string \| null | Condición ambiental sin mueble asociado (ej. "Ecto Mist", "Shimmer"), separada de `station` |
-| resultName | string (solo en recetas "huérfanas") | Nombre del resultado cuando `resultItemId` no tiene fila en Item (hueco de mantenimiento de la wiki, ~67 recetas) |
+| resultName | string (solo en recetas "huérfanas") | Nombre del resultado cuando `resultItemId` no tiene fila en Item (hueco de mantenimiento de la wiki; 46 recetas / 45 ítems en la extracción del 2026-10-15) |
 | resultImageUrl | string (solo en recetas "huérfanas", opcional) | Ícono del resultado cuando no hay fila en Item |
 
 **Nota:** un Item puede tener múltiples Recipe (relación uno a muchos). Confirmado con datos reales (extracción vía Terraria Wiki/Cargo, ver sección 9).
 
-**Caso especial `categoryHint` sin alternativas:** "Recorded Music Boxes" (75 variantes de caja musical grabable) no tiene un set cerrado de opciones — queda como `categoryHint` sin lista de itemIds asociada. La UI debe mostrar el nombre del grupo sin poder enlazar a un ítem concreto.
+**Caso especial `categoryHint` sin alternativas:** "Recorded Music Boxes" (75 variantes de caja musical grabable) no tiene un set cerrado de opciones — queda como `categoryHint` sin ítems asociados (en `ingredient_categories.json` figura con lista vacía). La UI debe mostrar el nombre del grupo sin poder enlazar a un ítem concreto.
 
 ### Derivado (no almacenado): "Usado para" (RF10)
 No es un campo de datos, se calcula recorriendo todas las `Recipe` y filtrando aquellas donde el `id` del ítem aparece dentro de `ingredients[]`. Se resuelve en runtime (ej: útil como índice inverso construido una vez al cargar la app).
 
-### Traducción
-Estructura separada del modelo base, en un diccionario plano por idioma:
+### Idioma y traducción
+
+**v1: todo en inglés** (decidido el 2026-10-19). La interfaz y los nombres de ítems salen de los datos: el nombre es `name` en `items.json`, no hace falta diccionario de traducción.
 
 ```
-items.json    → { id (number), category, subcategory, imageUrl, rarity, damage, sellValue }  (sin name)
-recipes.json  → { id, resultItemId (number), resultQuantity, ingredients[], station, requiredCondition, resultName, resultImageUrl }
-i18n/es.json  → { "1": "Piqueta de Hierro", ... }  (clave = id numérico como string, ver nota abajo)
+items.json                  → { id (number), name, category, subcategory, imageUrl, rarity, damage, damageType, defense, sellValue }
+recipes.json                → { id, resultItemId (number), resultQuantity, ingredients[], station, requiredCondition, resultName, resultImageUrl }
+ingredient_categories.json  → { "Any Iron Bar": [22, 704], ... }  (grupo → ids de ítems)
 ```
 
-**Nota sobre la clave del diccionario de traducción:** como `Item.id` es numérico (`1`, no `"iron_pickaxe"`), la clave real en `i18n/es.json` debe ser el número (o el número convertido a string, según lo pida `JSON.stringify`/acceso por clave en JS) — no un slug legible como se ilustró en versiones anteriores de este documento.
+Recomendación de implementación: obtener los nombres siempre a través de la capa de acceso a datos (ej. `getItemName(id)`), para que agregar idiomas en v2 no obligue a tocar componentes.
 
-Motivo: separar estructura de contenido textual permite corregir/ampliar traducciones sin tocar el modelo, detectar traducciones faltantes con un script de comparación de claves, y escalar a otros idiomas en el futuro sin duplicar datos.
+**v2 (español, no comprometido):** diccionario plano separado por idioma, `i18n/es.json` → `{ "1": "Piqueta de Hierro", ... }`. La clave debe ser el `id` numérico (como string en JS), no un slug legible. Motivo: separar estructura de contenido textual permite corregir/ampliar traducciones sin tocar el modelo, detectar traducciones faltantes con un script de comparación de claves y escalar a otros idiomas sin duplicar datos. La fuente de los nombres en español está por definir (p. ej. cruce con Terraria Wiki ES por id interno).
 
 ### Validación contra requisitos funcionales
 
 | Requisito | Soportado por |
 |---|---|
-| RF01-02 Buscar por nombre | `es.json` (nombre) |
+| RF01-02 Buscar por nombre | `name` en Item |
 | RF03 Ver receta con ingredientes/cantidades | `ingredients[]` en Recipe |
 | RF04 Estación requerida | `station` en Recipe |
 | RF05-06 Listado/filtro por categoría | `category` en Item |
@@ -191,24 +197,28 @@ Motivo: separar estructura de contenido textual permite corregir/ampliar traducc
 
 **Extracción completada y publicada.** Fuente: Terraria Wiki oficial (terraria.wiki.gg), vía endpoint Cargo Export. Repo público: https://github.com/Ren-reno/terraria-crafting-data-pipeline
 
-**Resultado final, verificado directamente (no solo por documentación):**
-- `items.json`: 6071 ítems
-- `recipes.json`: 3905 recetas
-- Suite de tests de calidad de datos: **26 passed, 0 failed** (confirmado corriendo `pytest` sobre el repo clonado)
-- `resultImageUrl` en las 67 recetas huérfanas: 67/67 presentes
+**Estado actual, verificado directamente (re-extracción del 2026-10-15, repo clonado desde GitHub):**
+- `items.json`: 6141 ítems
+- `recipes.json`: 3942 recetas
+- `ingredient_categories.json`: 37 grupos de ingredientes intercambiables
+- Suite de tests de calidad de datos: **36 passed, 0 failed** (con 3 warnings esperados por cambios dentro de lo tolerado)
+- Recetas huérfanas: 46 recetas / 45 ítems. 43 tienen `resultImageUrl`; 2 quedaron sin imagen ("Trusty Chillet" y "Trusty Chillet Ignis"), pendientes de investigar en el repo de datos
 - Licencia documentada en `ATTRIBUTION.md`: datos bajo CC BY-NC-SA 4.0 (contenido de texto/estructura), imágenes con licencia variable por archivo (a confirmar puntualmente antes de publicación destacada), código del pipeline bajo MIT
 
-Traducción al español: sigue pendiente, no bloquea el resto del desarrollo (se puede maquetar con nombres en inglés temporalmente y reemplazar después).
+**Idioma:** v1 íntegramente en inglés (decidido el 2026-10-19). La traducción al español queda para v2.
 
 ## 9. Próximos pasos
 
 - [x] Revisar repo de GitHub con datos de items/recetas — descartados por desactualizados, se optó por extracción propia
-- [x] Extraer datos reales desde Terraria Wiki (Cargo Export) — 6071 items, 3905 recetas, con tests de calidad en verde
-- [x] Re-correr `process.py` para que las 67 recetas huérfanas incluyan `resultImageUrl` — **verificado: 67/67 ✅**
+- [x] Extraer datos reales desde Terraria Wiki (Cargo Export) — 6141 items y 3942 recetas (re-extracción del 2026-10-15), con tests de calidad en verde
+- [x] Re-correr `process.py` para que las 67 recetas huérfanas incluyan `resultImageUrl` — verificado en su momento (67/67); tras la re-extracción del 2026-10-15 son 43 de 45 ítems huérfanos (2 pendientes, ver sección 8)
 - [x] Decidir tratamiento de los 45 ítems con `rarity: "quest"` — se deja sin forzar a número, codificado como test de regresión
 - [x] Decidir categoría de respaldo para los 7 ítems crafteables con `category: null` — misma lógica, test de regresión propio
-- [x] Repo de datos publicado en GitHub, con README/LICENSE/ATTRIBUTION.md y 26 tests en verde (verificado corriendo la suite real)
-- [ ] Definir estrategia concreta para nombres en español (cruce con Terraria Wiki ES por id interno) — v2 según lo documentado, no bloquea
+- [x] Repo de datos publicado en GitHub, con README/LICENSE/ATTRIBUTION.md y 36 tests en verde (verificado corriendo la suite real)
+- [x] Decidir idioma de v1: todo en inglés (2026-10-19)
+- [ ] (v2) Definir estrategia concreta para nombres en español (cruce con Terraria Wiki ES por id interno)
+- [x] Crear el repo de la app en GitHub: https://github.com/Ren-reno/CrafTerraria
+- [ ] Inicializar el proyecto React (con React Router) y copiar `items.json`, `recipes.json` e `ingredient_categories.json` del repo de datos a `src/data/`, registrando el commit de origen
 - [x] Etapa de Diseño — Wireframes de baja fidelidad:
   - [x] Wireframe Home/Listado (mobile, vertical): buscador, categorías tipo chip, grid 2 columnas, paginación
   - [x] Wireframe Detalle de ítem (mobile, vertical): imagen, nombre, descripción, Crafting Recipe, Crafted At (estación), Used In
@@ -219,6 +229,7 @@ Traducción al español: sigue pendiente, no bloquea el resto del desarrollo (se
   - Falta agregar a ese mismo Frame: barra superior con el nombre "CrafTerraria" (solo texto, sin ícono) y la fila "Ordenar por: Rareza / Daño" (chip "Daño" debe distinguirse visualmente como condicional).
   - Último prompt de referencia entregado (para generar imagen guía y replicar en Figma) ya incluye: header CrafTerraria, buscador, categorías, ordenar por, grid, paginación con patrón `< 1 2 3 ... 15 >` — pendiente que el usuario lo genere y replique.
   - Frame 2 (Detalle de ítem) existe solo como wireframe de baja fidelidad (estructura validada contra RF01-RF10), sin estilo real aplicado todavía.
+- [ ] Pasar a inglés los textos de los diseños (ej. "Ordenar por: Rareza / Daño" → "Sort by: Rarity / Damage"), ahora que la v1 es íntegramente en inglés
 - [ ] Mockup de alta fidelidad de Detalle de ítem, heredando el mismo lenguaje visual
 - [ ] Buscar assets reales: sprites de ítems (ya se tiene `imageUrl` real por ítem desde la wiki) o pack de iconos pixel-art genérico si se prefiere no depender de assets de Re-Logic
 - [ ] Buscar/crear texturas tileables genéricas (piedra, madera) optimizadas (.webp, comprimidas) para fondo — cuidando RNF01 (carga rápida)
@@ -252,3 +263,7 @@ Se generaron mockups de inspiración con IA (no assets finales) para definir dir
 | 2026-08-17 | Nombre de la app definido: **CrafTerraria**. Barra superior solo con texto, sin ícono |
 | 2026-08-17 | Corrección de consistencia: v1 es 100% mobile, desktop pasa completo a v2 (antes el documento sugería que desktop podía llegar "después, dentro de v1") |
 | 2026-08-17 | Verificación de esquema real contra el repo publicado: `Item.id` corregido de `string` a `number` (era un supuesto de cuando el modelo era teórico, sin datos reales); snippet de la sección Traducción actualizado para incluir todos los campos reales (`damage`, `requiredCondition`, `resultName`, `resultImageUrl`) y aclarar que las claves de `i18n/es.json` deben ser numéricas, no slugs legibles |
+| 2026-10-19 | **v1 completa en inglés** (interfaz y nombres de ítems); el español pasa a v2. `items.json` ya incluye `name`, así que el diccionario `i18n/es.json` deja de ser necesario en v1 (el diseño se conserva para v2). Reemplaza las decisiones del 2026-07-30 sobre el diccionario de traducción |
+| 2026-10-19 | Las rutas de ítem usan el `id`, no un slug: hay 7 nombres repetidos entre ítems distintos |
+| 2026-10-19 | Datos re-extraídos el 2026-10-15: 6141 ítems, 3942 recetas, 36 tests. `items.json` suma `name`, `damageType` y `defense`; el `id` de receta pasa a ser estable (`{resultItemId}-{n}`); `ingredient_categories.json` es parte de los datos que consume la app |
+| 2026-10-19 | Repo de la app creado: https://github.com/Ren-reno/CrafTerraria (código bajo MIT; datos bajo CC BY-NC-SA 4.0 con atribución al repo de datos) |
