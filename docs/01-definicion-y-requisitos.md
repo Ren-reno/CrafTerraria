@@ -2,7 +2,7 @@
 
 > Nombre de la app: **CrafTerraria**. Barra superior con solo texto (sin ícono), definido el 2026-08-17.
 
-> Documento vivo. Se va completando a medida que avanza el proceso de desarrollo. Última actualización: 2026-10-20.
+> Documento vivo. Se va completando a medida que avanza el proceso de desarrollo. Última actualización: 2026-10-21.
 
 ## 1. Descripción del proyecto
 
@@ -227,7 +227,9 @@ Sin confirmar todavía: la licencia exacta de un ícono de ítem puntual, la exi
 - [x] Decidir idioma de v1: todo en inglés (2026-10-19)
 - [ ] (v2) Definir estrategia concreta para nombres en español (cruce con Terraria Wiki ES por id interno)
 - [x] Crear el repo de la app en GitHub: https://github.com/Ren-reno/CrafTerraria
-- [ ] Inicializar el proyecto React (con React Router) y copiar `items.json`, `recipes.json` e `ingredient_categories.json` del repo de datos a `src/data/`, registrando el commit de origen
+- [x] Inicializar el proyecto React (con React Router) y copiar `items.json`, `recipes.json` e `ingredient_categories.json` del repo de datos a `src/data/`, registrando el commit de origen (2026-10-21)
+- [x] Capa de acceso a datos (`src/services/dataService.js`) con pruebas, y pantallas provisorias de Home, Detalle y Categoría (2026-10-21)
+- [ ] Pantalla de Detalle definitiva (RF03, RF04, RF07, RF08, RF09, RF10), ya sobre la capa de datos
 - [x] Etapa de Diseño — Wireframes de baja fidelidad:
   - [x] Wireframe Home/Listado (mobile, vertical): buscador, categorías tipo chip, grid 2 columnas, paginación
   - [x] Wireframe Detalle de ítem (mobile, vertical): imagen, nombre, descripción, Crafting Recipe, Crafted At (estación), Used In
@@ -241,7 +243,7 @@ Sin confirmar todavía: la licencia exacta de un ícono de ítem puntual, la exi
 - [ ] Pasar a inglés los textos de los diseños (ej. "Ordenar por: Rareza / Daño" → "Sort by: Rarity / Damage"), ahora que la v1 es íntegramente en inglés
 - [ ] Mockup de alta fidelidad de Detalle de ítem, heredando el mismo lenguaje visual
 - [x] Decidir origen de las imágenes: enlazar directo desde la wiki (2026-10-20), ver sección 8
-- [ ] Implementar `getItemImageUrl()`, imagen de respaldo genérica, carga diferida y atribución en el pie de la app
+- [x] Implementar `getItemImageUrl()`, imagen de respaldo genérica, carga diferida y atribución en el pie de la app (2026-10-21)
 - [ ] Comprobar que los íconos cargan desde `localhost` y desde el dominio publicado (sin bloqueo de la wiki)
 - [ ] Antes de publicar: abrir la ficha de un archivo de ícono en la wiki (ej. `File:Iron Pickaxe.png`) y confirmar su plantilla de licencia
 - [ ] Buscar/crear texturas tileables genéricas (piedra, madera) optimizadas (.webp, comprimidas) para fondo — cuidando RNF01 (carga rápida)
@@ -280,3 +282,5 @@ Se generaron mockups de inspiración con IA (no assets finales) para definir dir
 | 2026-10-19 | Datos re-extraídos el 2026-10-15: 6141 ítems, 3942 recetas, 36 tests. `items.json` suma `name`, `damageType` y `defense`; el `id` de receta pasa a ser estable (`{resultItemId}-{n}`); `ingredient_categories.json` es parte de los datos que consume la app |
 | 2026-10-19 | Repo de la app creado: https://github.com/Ren-reno/CrafTerraria (código bajo MIT; datos bajo CC BY-NC-SA 4.0 con atribución al repo de datos) |
 | 2026-10-20 | **Imágenes: se enlazan directo desde la wiki** (`imageUrl`), sin copiarlas al repo, con imagen de respaldo, carga diferida y atribución visible. Motivo: el arte del juego es propiedad de Re-Logic (los archivos revisados figuran "In Copyright" en la wiki) y no se redistribuye. Pendiente confirmar la licencia de un ícono puntual y que la wiki no bloquee el enlace directo |
+| 2026-10-21 | **Proyecto base creado**: Vite 7, React 19, React Router 7 y Vitest 3, con los datos copiados a `src/data/` (commit `81be0be` del repo de datos). Capa de datos con 30 pruebas y pantallas provisorias con 13. Rango de Node soportado: 20.19+, 22.12+ y 24. Se usan Vitest 3 y jsdom 27 a propósito: Vitest 5 y jsdom 30 exigen Node 22.22+, y Vitest 4 no se instala con npm 10 |
+| 2026-10-21 | Decisiones de la capa de datos: (1) los resultados huérfanos se convierten en ítems mínimos (`isOrphan`) para poder buscarlos y abrirlos como cualquier otro; (2) "Usado en" incluye las recetas que aceptan el ítem mediante un grupo ("Any Iron Bar") e indica cuál; (3) los ítems sin categoría se listan en "Other"; (4) los ids de la URL solo se aceptan en formato canónico (`/item/1`, no `/item/01` ni `/item/1e0`) |
