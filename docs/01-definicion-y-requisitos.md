@@ -21,7 +21,7 @@ Proyecto con fines de portafolio, en el marco de la carrera técnica de Analista
 - Filtro/navegación por categoría
 - Ordenar/filtrar listado por daño (solo aplica a categorías con daño, ej. Armas) y por rareza (aplica a todos los ítems)
 - Interfaz y datos en inglés (nombres de ítems tal como los publica la wiki oficial)
-- Diseño responsive dentro del rango de tamaños de celular (mobile-first; distintos anchos/alturas de móvil, no desktop)
+- Diseño responsive, mobile-first: de celular (vertical) a desktop, con el mismo código y las mismas rutas en todos los tamaños
 
 ### Fuera del alcance (v1)
 - Cuentas de usuario / login
@@ -31,13 +31,15 @@ Proyecto con fines de portafolio, en el marco de la carrera técnica de Analista
 - Modo multijugador/colaborativo
 - Otros idiomas además de inglés (el español es candidato a v2, ver Roadmap v2)
 - Otras mecánicas del juego no relacionadas a crafteo (bosses, biomas, NPCs)
-- **Soporte desktop** → v1 es 100% mobile, desktop pasa completo a v2 (ver Roadmap v2)
+- Layout de desktop *estructuralmente distinto* (ej. panel de detalle junto al listado, sin cambiar de pantalla) → candidato a v2 (ver Roadmap v2)
 
 ### Riesgo identificado
 Cubrir todos los ítems crafteables implica un volumen alto de datos (Terraria tiene miles de ítems). Se abordará con una estrategia de carga progresiva/por lotes en la etapa de implementación, no de una sola vez.
 
+Además, soportar móvil y desktop en la v1 duplica el trabajo de diseño (wireframes y mockups en dos anchos). Se mitiga con una base mobile-first, un solo árbol de componentes y las diferencias de layout resueltas con CSS (media queries), no con componentes distintos.
+
 ### Roadmap v2 (ideas, no comprometidas — no diseñar en detalle hasta llegar ahí)
-- **Soporte desktop real**: v1 es mobile-first; desktop se agrega vía media queries adicionales sobre la misma base (bajo esfuerzo, ya lo habilita RNF05). Un layout desktop *estructuralmente distinto* (ej. panel de detalle sin cambiar de pantalla) sí sería trabajo nuevo, no solo CSS.
+- **Layout desktop estructuralmente distinto**: la v1 ya es responsive (móvil y desktop comparten el modelo de navegación: cada ítem es una página). Un panel de detalle junto al listado, sin cambiar de pantalla, sería trabajo nuevo, no solo CSS.
 - **Backend de usuario**: favoritos, builds guardadas, sesión/login. La capa de acceso a datos (sección 6) ya está pensada para que esto no requiera tocar componentes de v1, solo cambiar la implementación interna de las funciones de datos.
 - **Backend de contenido**: actualizar items/recetas automáticamente ante nuevas versiones del juego, reutilizando el pipeline Python ya publicado (`extract.py`/`process.py`) como job periódico en vez de corrida manual.
 - **Español**: nombres oficiales del juego (no traducción literal), con un diccionario separado por idioma (ver sección 7, "Idioma y traducción"). La fuente de los nombres está por definir.
@@ -75,7 +77,15 @@ Cubrir todos los ítems crafteables implica un volumen alto de datos (Terraria t
 | RNF02 | El código debe ser mantenible y estar documentado (componentes claros, README, comentarios donde aporte) — clave para portafolio |
 | RNF03 | La interfaz debe ofrecer buena UI/UX: navegación intuitiva, feedback visual claro, diseño coherente |
 | RNF04 | La app debe tener rutas propias por ítem y por categoría (URLs compartibles, ej: `/item/1`). Las rutas de ítem usan el `id`, no el nombre: hay 7 nombres repetidos entre ítems distintos |
-| RNF05 | El diseño debe priorizar la experiencia en móvil (mobile-first) en orientación vertical (portrait). Desktop queda fuera de v1 por completo (ver Alcance y Roadmap v2) — no es "después dentro de v1", es otra versión |
+| RNF05 | El diseño debe ser responsive y mobile-first: la base es el celular en orientación vertical (portrait) y tablet/desktop se agregan con media queries (`min-width`), con el mismo árbol de componentes y las mismas rutas. Debe verse y usarse bien en celular, tablet y desktop. No se rediseña el celular en horizontal (landscape) |
+
+### Criterios responsive (propuesta, a confirmar en el diseño)
+
+- **Breakpoints** (mobile-first, `min-width`): base por debajo de 600 px (celular); desde 600 px (celular grande o tablet); desde 960 px (desktop, con el contenido centrado y un ancho máximo).
+- **Grid de ítems:** 2 columnas en la base y más columnas al crecer el ancho (ej. 3 desde 600 px y 4 o 5 desde 960 px).
+- **Detalle de ítem:** una columna en móvil; en desktop, dos columnas (receta y estación a un lado, "Used in" al otro), siempre en su propia ruta.
+- **Interacción:** objetivos táctiles de al menos 44 px en móvil; estados hover y foco visibles en desktop; todo navegable con teclado.
+- **Verificación:** revisar cada pantalla a 360, 768 y 1280 px de ancho.
 
 ## 6. Arquitectura de la aplicación
 
@@ -225,23 +235,26 @@ Sin confirmar todavía: la licencia exacta de un ícono de ítem puntual, la exi
 - [x] Decidir categoría de respaldo para los 7 ítems crafteables con `category: null` — misma lógica, test de regresión propio
 - [x] Repo de datos publicado en GitHub, con README/LICENSE/ATTRIBUTION.md y 36 tests en verde (verificado corriendo la suite real)
 - [x] Decidir idioma de v1: todo en inglés (2026-10-19)
+- [x] Decidir plataformas de v1: responsive, móvil y desktop (2026-10-21)
 - [ ] (v2) Definir estrategia concreta para nombres en español (cruce con Terraria Wiki ES por id interno)
 - [x] Crear el repo de la app en GitHub: https://github.com/Ren-reno/CrafTerraria
 - [x] Inicializar el proyecto React (con React Router) y copiar `items.json`, `recipes.json` e `ingredient_categories.json` del repo de datos a `src/data/`, registrando el commit de origen (2026-10-21)
 - [x] Capa de acceso a datos (`src/services/dataService.js`) con pruebas, y pantallas provisorias de Home, Detalle y Categoría (2026-10-21)
-- [ ] Pantalla de Detalle definitiva (RF03, RF04, RF07, RF08, RF09, RF10), ya sobre la capa de datos
+- [ ] Pantalla de Detalle definitiva (RF03, RF04, RF07, RF08, RF09, RF10), ya sobre la capa de datos y responsive (móvil y desktop)
 - [x] Etapa de Diseño — Wireframes de baja fidelidad:
   - [x] Wireframe Home/Listado (mobile, vertical): buscador, categorías tipo chip, grid 2 columnas, paginación
   - [x] Wireframe Detalle de ítem (mobile, vertical): imagen, nombre, descripción, Crafting Recipe, Crafted At (estación), Used In
   - [x] Validado contra RF01-RF10: cubiertos en su totalidad
   - [ ] Diseñar estado alternativo de RF08 (ítem sin receta) como variante de la pantalla de Detalle
-- [ ] Retomar mockup de alta fidelidad del Home en Figma (en pausa), agregando controles de RF11/RF12 (orden por rareza/daño)
+- [ ] Wireframes de baja fidelidad de Home/Listado y Detalle en desktop (desde 960 px), reutilizando la estructura validada contra RF01-RF10
+- [ ] Decidir qué muestra el Detalle en lugar de la "descripción" del wireframe: ningún requisito la pide y los datos no tienen ese campo. Propuesta: un bloque con los datos que sí existen (category, rarity, damage y damageType, defense, sellValue); el texto descriptivo quedaría para v2 si se extiende el pipeline
+- [ ] Retomar mockup de alta fidelidad del Home en Figma (en pausa), agregando controles de RF11/RF12 (orden por rareza/daño), y en dos anchos (móvil y desktop)
   - **Estado exacto al 2026-08-17:** Frame 1 (Home) en Figma ya tiene, con estilo real aplicado (no placeholder): buscador, categorías tipo chip, grid 2 columnas (ícono real de espada pixel-art de prueba, se repite en todas las cards — falta conectar íconos reales por ítem), paginación con estados activo/inactivo.
   - Falta agregar a ese mismo Frame: barra superior con el nombre "CrafTerraria" (solo texto, sin ícono) y la fila "Ordenar por: Rareza / Daño" (chip "Daño" debe distinguirse visualmente como condicional).
   - Último prompt de referencia entregado (para generar imagen guía y replicar en Figma) ya incluye: header CrafTerraria, buscador, categorías, ordenar por, grid, paginación con patrón `< 1 2 3 ... 15 >` — pendiente que el usuario lo genere y replique.
   - Frame 2 (Detalle de ítem) existe solo como wireframe de baja fidelidad (estructura validada contra RF01-RF10), sin estilo real aplicado todavía.
 - [ ] Pasar a inglés los textos de los diseños (ej. "Ordenar por: Rareza / Daño" → "Sort by: Rarity / Damage"), ahora que la v1 es íntegramente en inglés
-- [ ] Mockup de alta fidelidad de Detalle de ítem, heredando el mismo lenguaje visual
+- [ ] Mockup de alta fidelidad de Detalle de ítem (móvil y desktop), heredando el mismo lenguaje visual
 - [x] Decidir origen de las imágenes: enlazar directo desde la wiki (2026-10-20), ver sección 8
 - [x] Implementar `getItemImageUrl()`, imagen de respaldo genérica, carga diferida y atribución en el pie de la app (2026-10-21)
 - [ ] Comprobar que los íconos cargan desde `localhost` y desde el dominio publicado (sin bloqueo de la wiki)
@@ -284,3 +297,5 @@ Se generaron mockups de inspiración con IA (no assets finales) para definir dir
 | 2026-10-20 | **Imágenes: se enlazan directo desde la wiki** (`imageUrl`), sin copiarlas al repo, con imagen de respaldo, carga diferida y atribución visible. Motivo: el arte del juego es propiedad de Re-Logic (los archivos revisados figuran "In Copyright" en la wiki) y no se redistribuye. Pendiente confirmar la licencia de un ícono puntual y que la wiki no bloquee el enlace directo |
 | 2026-10-21 | **Proyecto base creado**: Vite 7, React 19, React Router 7 y Vitest 3, con los datos copiados a `src/data/` (commit `81be0be` del repo de datos). Capa de datos con 30 pruebas y pantallas provisorias con 13. Rango de Node soportado: 20.19+, 22.12+ y 24. Se usan Vitest 3 y jsdom 27 a propósito: Vitest 5 y jsdom 30 exigen Node 22.22+, y Vitest 4 no se instala con npm 10 |
 | 2026-10-21 | Decisiones de la capa de datos: (1) los resultados huérfanos se convierten en ítems mínimos (`isOrphan`) para poder buscarlos y abrirlos como cualquier otro; (2) "Usado en" incluye las recetas que aceptan el ítem mediante un grupo ("Any Iron Bar") e indica cuál; (3) los ítems sin categoría se listan en "Other"; (4) los ids de la URL solo se aceptan en formato canónico (`/item/1`, no `/item/01` ni `/item/1e0`) |
+| 2026-10-21 | **v1 responsive: móvil y desktop** (decisión del autor). Reemplaza las decisiones del 2026-08-04 y del 2026-08-17 que dejaban desktop para v2. Se mantiene mobile-first: base móvil y tablet/desktop con media queries, un solo árbol de componentes y las mismas rutas. Un panel de detalle junto al listado (sin cambiar de pantalla) queda para v2. Implica diseñar y probar dos anchos |
+| 2026-10-21 | Detectado: el wireframe del Detalle incluye una "descripción", pero ningún requisito la pide ni existe ese campo en los datos. Queda como pendiente de decisión (sección 9) |
