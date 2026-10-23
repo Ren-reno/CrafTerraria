@@ -1,0 +1,58 @@
+/* Visual system approved on 2026-10-22 (see docs/01, section "Sistema visual").
+   Warm torch light on a dark cave; wood and stone frames. */
+:root {
+  --cave: #17110d;
+  --dirt: #241b15;
+  --wood-panel: #2e2218;
+  --slot: #120d0a;
+  --wood: #5a3d26;
+  --wood-soft: #3a2c20;
+  --parchment: #f3e9d8;
+  --muted: #bfae94;
+  --torch: #ff9a2e;
+  --torch-light: #ffc857;
+
+  /* Rarity colors, tuned for dark backgrounds (close to the game, not official values). */
+  --r-gray: #9a9a9a;
+  --r-white: #f3f3f3;
+  --r-blue: #8f9bff;
+  --r-green: #8ee08e;
+  --r-orange: #ffb680;
+  --r-light-red: #ff8f8f;
+  --r-pink: #ff8fe8;
+  --r-light-purple: #cfa0ff;
+  --r-lime: #a6f23a;
+  --r-yellow: #ffe94d;
+  --r-cyan: #4dd8ff;
+  --r-red: #ff5c7d;
+  --r-purple: #b980ff;
+  --r-amber: #ffb000;
+  --r-fiery-red: #ff6a3d;
+
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-display: 'Pixelify Sans', system-ui, sans-serif;
+}
+
+.rarity-gray { color: var(--r-gray); }
+.rarity-white { color: var(--r-white); }
+.rarity-blue { color: var(--r-blue); }
+.rarity-green { color: var(--r-green); }
+.rarity-orange { color: var(--r-orange); }
+.rarity-light-red { color: var(--r-light-red); }
+.rarity-pink { color: var(--r-pink); }
+.rarity-light-purple { color: var(--r-light-purple); }
+.rarity-lime { color: var(--r-lime); }
+.rarity-yellow { color: var(--r-yellow); }
+.rarity-cyan { color: var(--r-cyan); }
+.rarity-red { color: var(--r-red); }
+.rarity-purple { color: var(--r-purple); }
+.rarity-amber { color: var(--r-amber); }
+.rarity-fiery-red { color: var(--r-fiery-red); }
+.rarity-unknown { color: var(--muted); }
+.rarity-rainbow {
+  color: var(--r-yellow);
+  background: linear-gradient(90deg, var(--r-light-red), var(--r-yellow), var(--r-green), var(--r-cyan), var(--r-light-purple));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

@@ -16,7 +16,7 @@ const PLACEHOLDER =
  * Item icon, linked directly from the wiki (docs/01, section 8). Lazy-loaded,
  * with a generic fallback when there is no URL or the request fails.
  */
-export default function ItemImage({ item, size = 32 }) {
+export default function ItemImage({ item, size = 32, decorative = false }) {
   const src = getItemImageUrl(item)
   const [failedSrc, setFailedSrc] = useState(null)
   const usePlaceholder = !src || failedSrc === src
@@ -25,7 +25,7 @@ export default function ItemImage({ item, size = 32 }) {
     <img
       className="item-icon"
       src={usePlaceholder ? PLACEHOLDER : src}
-      alt={item?.name ?? 'Item icon'}
+      alt={decorative ? '' : (item?.name ?? 'Item icon')}
       width={size}
       height={size}
       loading="lazy"

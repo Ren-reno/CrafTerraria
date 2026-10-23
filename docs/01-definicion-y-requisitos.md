@@ -2,7 +2,7 @@
 
 > Nombre de la app: **CrafTerraria**. Barra superior con solo texto (sin ícono), definido el 2026-08-17.
 
-> Documento vivo. Se va completando a medida que avanza el proceso de desarrollo. Última actualización: 2026-10-21.
+> Documento vivo. Se va completando a medida que avanza el proceso de desarrollo. Última actualización: 2026-10-22.
 
 ## 1. Descripción del proyecto
 
@@ -188,6 +188,26 @@ Recomendación de implementación: obtener los nombres siempre a través de la c
 
 **v2 (español, no comprometido):** diccionario plano separado por idioma, `i18n/es.json` → `{ "1": "Piqueta de Hierro", ... }`. La clave debe ser el `id` numérico (como string en JS), no un slug legible. Motivo: separar estructura de contenido textual permite corregir/ampliar traducciones sin tocar el modelo, detectar traducciones faltantes con un script de comparación de claves y escalar a otros idiomas sin duplicar datos. La fuente de los nombres en español está por definir (p. ej. cruce con Terraria Wiki ES por id interno).
 
+### Sistema visual (aprobado el 2026-10-22)
+
+Dirección: luz de antorcha cálida sobre una cueva oscura, con marcos de madera y piedra (estilo inventario). Está implementado en `src/styles/tokens.css`.
+
+| Token | Valor | Uso |
+|---|---|---|
+| `--cave` | `#17110d` | Fondo de la app |
+| `--dirt` | `#241b15` | Paneles y tarjetas |
+| `--wood-panel` | `#2e2218` | Paneles secundarios |
+| `--slot` | `#120d0a` | Ranura de ítem y buscador |
+| `--wood` | `#5a3d26` | Bordes |
+| `--parchment` | `#f3e9d8` | Texto |
+| `--muted` | `#bfae94` | Texto secundario |
+| `--torch` y `--torch-light` | `#ff9a2e` y `#ffc857` | Acento, enlaces y foco |
+
+- **Tipografía:** Pixelify Sans (títulos) e Inter (texto), autoalojadas con `@fontsource` (subconjuntos latin y latin-ext), sin depender de Google Fonts en tiempo de ejecución.
+- **Rareza:** se muestra como el nombre del tier con su color, tanto en el nombre del ítem como en la etiqueta `Rarity: ...`. Los colores están ajustados para fondo oscuro: son cercanos a los del juego, no valores oficiales. Mapeo (`src/lib/rarity.js`): -13 Fiery Red, -12 Rainbow, -1 Gray, 0 White, 1 Blue, 2 Green, 3 Orange, 4 Light Red, 5 Pink, 6 Light Purple, 7 Lime, 8 Yellow, 9 Cyan, 10 Red, 11 Purple y `"quest"` = Quest (ámbar).
+- **Detalle de ítem:** en lugar de la "descripción" del wireframe muestra un bloque con los datos que existen (Damage, Damage type, Defense y Sell value). El precio se formatea como monedas del juego: 100 cobre = 1 plata, 100 plata = 1 oro, 100 oro = 1 platino. Si una receta necesita varias estaciones se muestran unidas con " + ". Los ingredientes de grupo ("Any Wood") se despliegan para ver los ítems aceptados. "Used in" muestra 12 entradas y el resto bajo "Show all".
+- **Pendiente de decidir:** el menú hamburguesa del wireframe no tiene función definida en los requisitos, así que no se implementó. Hay que decidir qué abre o quitarlo.
+
 ### Validación contra requisitos funcionales
 
 | Requisito | Soportado por |
@@ -240,14 +260,17 @@ Sin confirmar todavía: la licencia exacta de un ícono de ítem puntual, la exi
 - [x] Crear el repo de la app en GitHub: https://github.com/Ren-reno/CrafTerraria
 - [x] Inicializar el proyecto React (con React Router) y copiar `items.json`, `recipes.json` e `ingredient_categories.json` del repo de datos a `src/data/`, registrando el commit de origen (2026-10-21)
 - [x] Capa de acceso a datos (`src/services/dataService.js`) con pruebas, y pantallas provisorias de Home, Detalle y Categoría (2026-10-21)
-- [ ] Pantalla de Detalle definitiva (RF03, RF04, RF07, RF08, RF09, RF10), ya sobre la capa de datos y responsive (móvil y desktop)
+- [x] Pantalla de Detalle definitiva (RF03, RF04, RF07, RF08, RF09, RF10), sobre la capa de datos y responsive, móvil y desktop (2026-10-22)
+- [x] Sistema visual aprobado e implementado: paleta, tipografías, colores de rareza, tarjetas, buscador y estado vacío (2026-10-22)
+- [ ] Home definitivo: listado completo con chips de categoría, orden por rareza y daño (RF11, RF12) y paginación (RF05, RF06)
+- [ ] Decidir qué abre el menú hamburguesa del wireframe, o quitarlo
 - [x] Etapa de Diseño — Wireframes de baja fidelidad:
   - [x] Wireframe Home/Listado (mobile, vertical): buscador, categorías tipo chip, grid 2 columnas, paginación
   - [x] Wireframe Detalle de ítem (mobile, vertical): imagen, nombre, descripción, Crafting Recipe, Crafted At (estación), Used In
   - [x] Validado contra RF01-RF10: cubiertos en su totalidad
   - [ ] Diseñar estado alternativo de RF08 (ítem sin receta) como variante de la pantalla de Detalle
 - [ ] Wireframes de baja fidelidad de Home/Listado y Detalle en desktop (desde 960 px), reutilizando la estructura validada contra RF01-RF10
-- [ ] Decidir qué muestra el Detalle en lugar de la "descripción" del wireframe: ningún requisito la pide y los datos no tienen ese campo. Propuesta: un bloque con los datos que sí existen (category, rarity, damage y damageType, defense, sellValue); el texto descriptivo quedaría para v2 si se extiende el pipeline
+- [ ] Decidir qué muestra el Detalle en lugar de la "descripción" del wireframe: ningún requisito la pide y los datos no tienen ese campo. Propuesta, ya implementada en el código el 2026-10-22 (pendiente de confirmar): un bloque con los datos que sí existen (category, rarity, damage y damageType, defense, sellValue); el texto descriptivo quedaría para v2 si se extiende el pipeline
 - [ ] Retomar mockup de alta fidelidad del Home en Figma (en pausa), agregando controles de RF11/RF12 (orden por rareza/daño), y en dos anchos (móvil y desktop)
   - **Estado exacto al 2026-08-17:** Frame 1 (Home) en Figma ya tiene, con estilo real aplicado (no placeholder): buscador, categorías tipo chip, grid 2 columnas (ícono real de espada pixel-art de prueba, se repite en todas las cards — falta conectar íconos reales por ítem), paginación con estados activo/inactivo.
   - Falta agregar a ese mismo Frame: barra superior con el nombre "CrafTerraria" (solo texto, sin ícono) y la fila "Ordenar por: Rareza / Daño" (chip "Daño" debe distinguirse visualmente como condicional).
@@ -299,3 +322,4 @@ Se generaron mockups de inspiración con IA (no assets finales) para definir dir
 | 2026-10-21 | Decisiones de la capa de datos: (1) los resultados huérfanos se convierten en ítems mínimos (`isOrphan`) para poder buscarlos y abrirlos como cualquier otro; (2) "Usado en" incluye las recetas que aceptan el ítem mediante un grupo ("Any Iron Bar") e indica cuál; (3) los ítems sin categoría se listan en "Other"; (4) los ids de la URL solo se aceptan en formato canónico (`/item/1`, no `/item/01` ni `/item/1e0`) |
 | 2026-10-21 | **v1 responsive: móvil y desktop** (decisión del autor). Reemplaza las decisiones del 2026-08-04 y del 2026-08-17 que dejaban desktop para v2. Se mantiene mobile-first: base móvil y tablet/desktop con media queries, un solo árbol de componentes y las mismas rutas. Un panel de detalle junto al listado (sin cambiar de pantalla) queda para v2. Implica diseñar y probar dos anchos |
 | 2026-10-21 | Detectado: el wireframe del Detalle incluye una "descripción", pero ningún requisito la pide ni existe ese campo en los datos. Queda como pendiente de decisión (sección 9) |
+| 2026-10-22 | **Sistema visual aprobado**: luz de antorcha sobre cueva oscura, marcos de madera, nombres de ítems pintados con el color de su rareza. Implementado: tokens CSS, fuentes autoalojadas, tarjetas, buscador con estado vacío y la pantalla de Detalle definitiva, responsive (móvil y desktop). 57 pruebas |

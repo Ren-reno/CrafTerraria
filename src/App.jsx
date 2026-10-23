@@ -8,9 +8,9 @@ export default function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <Link to="/">CrafTerraria</Link>
+        <Link to="/">CRAFTERRARIA</Link>
       </header>
-      <main>
+      <main className="page">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/item/:id" element={<ItemDetail />} />

@@ -20,8 +20,10 @@ Estructura:
 ```
 src/data/        copias de items.json, recipes.json e ingredient_categories.json (ver src/data/README.md)
 src/services/    dataService.js: único punto de acceso a los datos (búsqueda, recetas, "usado en", categorías, imágenes)
-src/components/  ItemImage (imagen enlazada desde la wiki, con respaldo y carga diferida)
-src/pages/       Home, ItemDetail, CategoryView, NotFound (maquetación provisoria, el diseño final está pendiente)
+src/components/  ItemImage (imagen enlazada desde la wiki, con respaldo y carga diferida), ItemCard, ItemSlot, ItemName, RarityBadge, SearchBox
+src/lib/         rarity.js (tier de rareza a nombre y color) y format.js (precios en monedas)
+src/styles/      tokens.css (paleta y colores de rareza, ver docs/01, "Sistema visual")
+src/pages/       Home, ItemDetail (definitivo), CategoryView, NotFound (el Home definitivo, con orden y paginación, está pendiente)
 ```
 
 ## Datos

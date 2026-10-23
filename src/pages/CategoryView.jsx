@@ -1,5 +1,5 @@
-import { Link, useParams } from 'react-router-dom'
-import ItemImage from '../components/ItemImage.jsx'
+import { useParams } from 'react-router-dom'
+import ItemCard from '../components/ItemCard.jsx'
 import { getCategories, getItemsByCategory } from '../services/dataService.js'
 import NotFound from './NotFound.jsx'
 
@@ -18,13 +18,10 @@ export default function CategoryView() {
       <p className="muted">
         {items.length} items{items.length > LIMIT ? ` (showing the first ${LIMIT})` : ''}
       </p>
-      <ul className="plain">
+      <ul className="grid">
         {items.slice(0, LIMIT).map((item) => (
           <li key={item.id}>
-            <Link to={`/item/${item.id}`}>
-              <ItemImage item={item} />
-              {item.name ?? `Item #${item.id}`}
-            </Link>
+            <ItemCard item={item} />
           </li>
         ))}
       </ul>
