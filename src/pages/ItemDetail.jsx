@@ -154,7 +154,7 @@ export default function ItemDetail() {
             </h1>
             <div className="chips">
               <RarityBadge rarity={item.rarity} />
-              <Link className="chip" to={`/category/${categorySlug(item.category)}`}>
+              <Link className="chip" to={`/?category=${categorySlug(item.category)}`}>
                 {categoryLabel(item.category)}
               </Link>
             </div>

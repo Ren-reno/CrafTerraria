@@ -26,6 +26,9 @@ ul { margin: 0; padding: 0; list-style: none; }
 .chip { display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; border: 2px solid var(--wood); background: var(--dirt); color: var(--parchment); font-weight: 600; font-size: 0.875rem; white-space: nowrap; text-decoration: none; }
 .chip.small { min-height: 36px; }
 a.chip:hover { border-color: var(--torch); color: var(--parchment); }
+.chip.on, a.chip.on:hover { background: var(--torch); border-color: var(--torch); color: var(--cave); }
+.chip.disabled { opacity: 0.4; }
+.chip.gap { border-color: transparent; background: none; }
 .chips { display: flex; gap: 8px; flex-wrap: wrap; }
 .slot { display: inline-flex; align-items: center; justify-content: center; flex: none; width: var(--slot-size, 64px); height: var(--slot-size, 64px); background: var(--slot); border: 2px solid var(--wood-soft); }
 .item-icon { image-rendering: pixelated; }
@@ -82,3 +85,14 @@ details.group ul { display: flex; flex-wrap: wrap; gap: 6px 12px; padding: 0 0 1
 .used-in-card .ingredient-note { display: block; }
 .link-button { margin-top: 12px; min-height: 44px; padding: 0 16px; background: var(--dirt); border: 2px solid var(--wood); color: var(--parchment); font: 600 0.875rem var(--font-body); cursor: pointer; }
 .link-button:hover { border-color: var(--torch); }
+
+/* Home: category chips scroll sideways on phones and wrap from 960px */
+.chips.scroll { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 6px; scrollbar-width: thin; }
+@media (min-width: 960px) { .chips.scroll { flex-wrap: wrap; overflow: visible; } }
+.toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.toolbar p { margin: 0; font-size: 0.875rem; }
+.select { min-height: 44px; padding: 0 12px; background: var(--dirt); border: 2px solid var(--wood); color: var(--parchment); font: 600 0.875rem var(--font-body); }
+.select:hover { border-color: var(--torch); }
+.select option { background: var(--dirt); color: var(--parchment); }
+.pagination { display: flex; justify-content: center; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 20px; }
+.pagination .chip { min-width: 44px; justify-content: center; padding: 0 10px; }

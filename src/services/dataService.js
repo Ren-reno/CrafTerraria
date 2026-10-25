@@ -233,3 +233,81 @@ export function getStats() {
     categories: getCategories().length,
   }
 }
+
+// ---------------------------------------------------------------------------
+// Listing: filter + sort (RF05, RF06, RF11, RF12)
+// ---------------------------------------------------------------------------
+
+// Rarity values that are not part of the normal -1..11 ladder. Items with these
+// (or with no rarity at all) are always listed last when sorting by rarity.
+function hasSpecialRarity(item) {
+  return item.rarity == null || item.rarity === 'quest' || item.rarity === -12 || item.rarity === -13
+}
+
+const byNameThenId = (a, b) => (a.name ?? '\uffff').localeCompare(b.name ?? '\uffff') || a.id - b.id
+
+/**
+ * Returns a sorted copy of `list`. Sorts:
+ *  - "relevance": keeps the given order (search results are already ranked).
+ *  - "name": A-Z; items without a name go last.
+ *  - "rarity-desc" / "rarity-asc": by tier; special rarities (Quest, Rainbow, Fiery Red)
+ *    and items without rarity go last in BOTH directions.
+ *  - "damage-desc" / "damage-asc": items without damage go last in both directions.
+ * Ties are broken by name, then id, so the order is deterministic.
+ */
+export function sortItems(list, sort) {
+  const copy = [...list]
+  switch (sort) {
+    case 'relevance':
+      return copy
+    case 'rarity-desc':
+    case 'rarity-asc': {
+      const sign = sort === 'rarity-desc' ? -1 : 1
+      return copy.sort((a, b) => {
+        const aSpecial = hasSpecialRarity(a)
+        const bSpecial = hasSpecialRarity(b)
+        if (aSpecial !== bSpecial) return aSpecial ? 1 : -1
+        return (aSpecial ? 0 : sign * (a.rarity - b.rarity)) || byNameThenId(a, b)
+      })
+    }
+    case 'damage-desc':
+    case 'damage-asc': {
+      const sign = sort === 'damage-desc' ? -1 : 1
+      return copy.sort((a, b) => {
+        const aHas = a.damage != null
+        const bHas = b.damage != null
+        if (aHas !== bHas) return aHas ? -1 : 1
+        return (aHas ? sign * (a.damage - b.damage) : 0) || byNameThenId(a, b)
+      })
+    }
+    default:
+      return copy.sort(byNameThenId)
+  }
+}
+
+/** True when at least one item of the category (slug) has damage (RF12). */
+export function categoryHasDamage(slug) {
+  return allItems.some((item) => categorySlug(item.category) === slug && item.damage != null)
+}
+
+export function defaultSort(hasQuery) {
+  return hasQuery ? 'relevance' : 'name'
+}
+
+/** Sort values available for the current view. Damage only where it applies (RF12). */
+export function getSortOptions({ hasQuery = false, category = null } = {}) {
+  const options = ['name', 'rarity-desc', 'rarity-asc']
+  if (category && categoryHasDamage(category)) options.push('damage-desc', 'damage-asc')
+  return hasQuery ? ['relevance', ...options] : options
+}
+
+/**
+ * Items for the listing: optional text query, optional category (slug) and a sort.
+ * Without a sort it uses the default (best match when searching, otherwise A-Z).
+ */
+export function listItems({ query = '', category = null, sort = null } = {}) {
+  const text = String(query ?? '').trim()
+  let list = text ? searchItems(text, { limit: Infinity }) : allItems
+  if (category) list = list.filter((item) => categorySlug(item.category) === category)
+  return sortItems(list, sort ?? defaultSort(Boolean(text)))
+}

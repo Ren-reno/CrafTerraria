@@ -94,7 +94,7 @@ React Router. Se descarta SPA de una sola vista porque:
 - Permite URLs directas y compartibles por ítem/categoría (mejor UX y SEO)
 - Evita perder el estado de navegación al recargar
 - Es el estándar de la industria — relevante para portafolio y futuras entrevistas
-- Curva de entrada razonable para rutas simples (`/item/:id`, `/category/:name`)
+- Curva de entrada razonable para rutas simples (`/item/:id` y `/?category=...&sort=...&page=...`; `/category/:name` redirige al listado filtrado)
 
 ### Tipo de arquitectura
 Frontend puro basado en componentes, con datos estáticos locales (sin backend propio):
@@ -208,6 +208,15 @@ Dirección: luz de antorcha cálida sobre una cueva oscura, con marcos de madera
 - **Detalle de ítem:** en lugar de la "descripción" del wireframe muestra un bloque con los datos que existen (Damage, Damage type, Defense y Sell value). El precio se formatea como monedas del juego: 100 cobre = 1 plata, 100 plata = 1 oro, 100 oro = 1 platino. Si una receta necesita varias estaciones se muestran unidas con " + ". Los ingredientes de grupo ("Any Wood") se despliegan para ver los ítems aceptados. "Used in" muestra 12 entradas y el resto bajo "Show all".
 - **Pendiente de decidir:** el menú hamburguesa del wireframe no tiene función definida en los requisitos, así que no se implementó. Hay que decidir qué abre o quitarlo.
 
+### Listado (Home)
+
+- **Estado en la URL:** `?q=iron&category=tool&sort=rarity-desc&page=2`. Cada vista se puede compartir y el botón atrás funciona. Un valor inválido (categoría inexistente, orden desconocido, página mal escrita) se ignora, y una página fuera de rango se ajusta a la última.
+- **Paginación:** clásica, `‹ 1 2 3 … 256 ›`, de 30 ítems por página (divisible por 2, 3 y 5, así no quedan filas a medias en ninguna cuadrícula). Cambiar la búsqueda, la categoría o el orden vuelve a la página 1.
+- **Orden (RF11):** por nombre (A–Z, por defecto), por rareza (de mayor a menor o al revés) y, solo mientras se busca, por mejor coincidencia. **Decisión:** las rarezas especiales (Quest, Rainbow, Fiery Red) y los ítems sin rareza van siempre al final, en ambos sentidos.
+- **Orden por daño (RF12):** solo aparece cuando la categoría elegida tiene ítems con daño (por ejemplo Weapon). Los ítems sin daño van al final.
+- **Categorías (RF05, RF06):** chips con desplazamiento horizontal en el móvil, que se reparten en varias líneas desde 960 px. La ruta antigua `/category/:name` redirige a `/?category=:name`.
+- **Menú hamburguesa:** sigue sin implementarse (pendiente de decidir).
+
 ### Validación contra requisitos funcionales
 
 | Requisito | Soportado por |
@@ -262,7 +271,7 @@ Sin confirmar todavía: la licencia exacta de un ícono de ítem puntual, la exi
 - [x] Capa de acceso a datos (`src/services/dataService.js`) con pruebas, y pantallas provisorias de Home, Detalle y Categoría (2026-10-21)
 - [x] Pantalla de Detalle definitiva (RF03, RF04, RF07, RF08, RF09, RF10), sobre la capa de datos y responsive, móvil y desktop (2026-10-22)
 - [x] Sistema visual aprobado e implementado: paleta, tipografías, colores de rareza, tarjetas, buscador y estado vacío (2026-10-22)
-- [ ] Home definitivo: listado completo con chips de categoría, orden por rareza y daño (RF11, RF12) y paginación (RF05, RF06)
+- [x] Home definitivo: listado completo con chips de categoría, orden por rareza y daño (RF11, RF12) y paginación (RF05, RF06) (2026-10-22)
 - [ ] Decidir qué abre el menú hamburguesa del wireframe, o quitarlo
 - [x] Etapa de Diseño — Wireframes de baja fidelidad:
   - [x] Wireframe Home/Listado (mobile, vertical): buscador, categorías tipo chip, grid 2 columnas, paginación
@@ -323,3 +332,4 @@ Se generaron mockups de inspiración con IA (no assets finales) para definir dir
 | 2026-10-21 | **v1 responsive: móvil y desktop** (decisión del autor). Reemplaza las decisiones del 2026-08-04 y del 2026-08-17 que dejaban desktop para v2. Se mantiene mobile-first: base móvil y tablet/desktop con media queries, un solo árbol de componentes y las mismas rutas. Un panel de detalle junto al listado (sin cambiar de pantalla) queda para v2. Implica diseñar y probar dos anchos |
 | 2026-10-21 | Detectado: el wireframe del Detalle incluye una "descripción", pero ningún requisito la pide ni existe ese campo en los datos. Queda como pendiente de decisión (sección 9) |
 | 2026-10-22 | **Sistema visual aprobado**: luz de antorcha sobre cueva oscura, marcos de madera, nombres de ítems pintados con el color de su rareza. Implementado: tokens CSS, fuentes autoalojadas, tarjetas, buscador con estado vacío y la pantalla de Detalle definitiva, responsive (móvil y desktop). 57 pruebas |
+| 2026-10-22 | **Home definitivo**: listado completo con búsqueda, chips de categoría, orden por nombre, rareza y daño (el daño solo donde aplica), y paginación de 30 ítems. Todo el estado vive en la URL. Decisión: las rarezas especiales y los ítems sin rareza van al final al ordenar por rareza. `/category/:name` pasa a ser una redirección. 95 pruebas |

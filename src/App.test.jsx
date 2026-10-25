@@ -57,7 +57,7 @@ describe('home and categories', () => {
   it('searches items by name (RF01)', () => {
     renderAt('/')
     fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'iron pickaxe' } })
-    const results = screen.getByRole('list', { name: 'Search results' })
+    const results = screen.getByRole('list', { name: 'Items' })
     expect(within(results).getAllByRole('link')[0].getAttribute('href')).toBe('/item/1')
   })
 
@@ -68,9 +68,10 @@ describe('home and categories', () => {
     expect(screen.getByText('Try a different search term')).toBeTruthy()
   })
 
-  it('lists categories and opens one (RF05)', () => {
+  it('keeps old category links working: /category/x opens the Home filtered by x (RF05)', () => {
     renderAt('/category/other')
-    expect(screen.getByRole('heading', { level: 1, name: 'Other' })).toBeTruthy()
+    const nav = screen.getByRole('navigation', { name: 'Categories' })
+    expect(within(nav).getByRole('link', { name: 'Other' }).getAttribute('aria-current')).toBe('true')
   })
 
   it('shows "not found" for an unknown category', () => {
@@ -92,7 +93,7 @@ describe('search box', () => {
     fireEvent.change(box, { target: { value: 'iron' } })
     fireEvent.click(screen.getByRole('button', { name: 'Clear search' }))
     expect(box.value).toBe('')
-    expect(screen.queryByRole('list', { name: 'Search results' })).toBeNull()
+    expect(within(screen.getByRole('list', { name: 'Items' })).getAllByRole('listitem')).toHaveLength(30)
   })
 })
 
@@ -103,7 +104,7 @@ describe('item detail content', () => {
     const stats = screen.getByLabelText('Stats')
     expect(within(stats).getByText('Damage')).toBeTruthy()
     expect(within(stats).getByText('4 silver')).toBeTruthy()
-    expect(screen.getByRole('link', { name: 'Tool' }).getAttribute('href')).toBe('/category/tool')
+    expect(screen.getByRole('link', { name: 'Tool' }).getAttribute('href')).toBe('/?category=tool')
   })
 
   it('shows the crafting station and ingredient quantities (RF04)', () => {
