@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { describe, expect, it } from 'vitest'
 import items from '../data/items.json'
 import recipes from '../data/recipes.json'

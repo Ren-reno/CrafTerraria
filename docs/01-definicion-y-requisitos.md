@@ -206,7 +206,6 @@ Dirección: luz de antorcha cálida sobre una cueva oscura, con marcos de madera
 - **Tipografía:** Pixelify Sans (títulos) e Inter (texto), autoalojadas con `@fontsource` (subconjuntos latin y latin-ext), sin depender de Google Fonts en tiempo de ejecución.
 - **Rareza:** se muestra como el nombre del tier con su color, tanto en el nombre del ítem como en la etiqueta `Rarity: ...`. Los colores están ajustados para fondo oscuro: son cercanos a los del juego, no valores oficiales. Mapeo (`src/lib/rarity.js`): -13 Fiery Red, -12 Rainbow, -1 Gray, 0 White, 1 Blue, 2 Green, 3 Orange, 4 Light Red, 5 Pink, 6 Light Purple, 7 Lime, 8 Yellow, 9 Cyan, 10 Red, 11 Purple y `"quest"` = Quest (ámbar).
 - **Detalle de ítem:** en lugar de la "descripción" del wireframe muestra un bloque con los datos que existen (Damage, Damage type, Defense y Sell value). El precio se formatea como monedas del juego: 100 cobre = 1 plata, 100 plata = 1 oro, 100 oro = 1 platino. Si una receta necesita varias estaciones se muestran unidas con " + ". Los ingredientes de grupo ("Any Wood") se despliegan para ver los ítems aceptados. "Used in" muestra 12 entradas y el resto bajo "Show all".
-- **Pendiente de decidir:** el menú hamburguesa del wireframe no tiene función definida en los requisitos, así que no se implementó. Hay que decidir qué abre o quitarlo.
 
 ### Listado (Home)
 
@@ -215,7 +214,7 @@ Dirección: luz de antorcha cálida sobre una cueva oscura, con marcos de madera
 - **Orden (RF11):** por nombre (A–Z, por defecto), por rareza (de mayor a menor o al revés) y, solo mientras se busca, por mejor coincidencia. **Decisión:** las rarezas especiales (Quest, Rainbow, Fiery Red) y los ítems sin rareza van siempre al final, en ambos sentidos.
 - **Orden por daño (RF12):** solo aparece cuando la categoría elegida tiene ítems con daño (por ejemplo Weapon). Los ítems sin daño van al final.
 - **Categorías (RF05, RF06):** chips con desplazamiento horizontal en el móvil, que se reparten en varias líneas desde 960 px. La ruta antigua `/category/:name` redirige a `/?category=:name`.
-- **Menú hamburguesa:** sigue sin implementarse (pendiente de decidir).
+- **Sin menú hamburguesa (decidido el 2026-10-22):** el encabezado es solo el título. Ningún requisito le da función, las categorías ya son chips en el Home y la atribución está en el pie de página.
 
 ### Validación contra requisitos funcionales
 
@@ -272,7 +271,7 @@ Sin confirmar todavía: la licencia exacta de un ícono de ítem puntual, la exi
 - [x] Pantalla de Detalle definitiva (RF03, RF04, RF07, RF08, RF09, RF10), sobre la capa de datos y responsive, móvil y desktop (2026-10-22)
 - [x] Sistema visual aprobado e implementado: paleta, tipografías, colores de rareza, tarjetas, buscador y estado vacío (2026-10-22)
 - [x] Home definitivo: listado completo con chips de categoría, orden por rareza y daño (RF11, RF12) y paginación (RF05, RF06) (2026-10-22)
-- [ ] Decidir qué abre el menú hamburguesa del wireframe, o quitarlo
+- [x] Menú hamburguesa del wireframe: se quita de la v1 (2026-10-22); ver sección 7, "Listado (Home)"
 - [x] Etapa de Diseño — Wireframes de baja fidelidad:
   - [x] Wireframe Home/Listado (mobile, vertical): buscador, categorías tipo chip, grid 2 columnas, paginación
   - [x] Wireframe Detalle de ítem (mobile, vertical): imagen, nombre, descripción, Crafting Recipe, Crafted At (estación), Used In
@@ -333,3 +332,4 @@ Se generaron mockups de inspiración con IA (no assets finales) para definir dir
 | 2026-10-21 | Detectado: el wireframe del Detalle incluye una "descripción", pero ningún requisito la pide ni existe ese campo en los datos. Queda como pendiente de decisión (sección 9) |
 | 2026-10-22 | **Sistema visual aprobado**: luz de antorcha sobre cueva oscura, marcos de madera, nombres de ítems pintados con el color de su rareza. Implementado: tokens CSS, fuentes autoalojadas, tarjetas, buscador con estado vacío y la pantalla de Detalle definitiva, responsive (móvil y desktop). 57 pruebas |
 | 2026-10-22 | **Home definitivo**: listado completo con búsqueda, chips de categoría, orden por nombre, rareza y daño (el daño solo donde aplica), y paginación de 30 ítems. Todo el estado vive en la URL. Decisión: las rarezas especiales y los ítems sin rareza van al final al ordenar por rareza. `/category/:name` pasa a ser una redirección. 95 pruebas |
+| 2026-10-22 | Se quita el menú hamburguesa de la v1: ningún requisito le da función, las categorías ya son chips en el Home y la atribución va en el pie. El encabezado queda solo con el título |
