@@ -1,5 +1,7 @@
 # CrafTerraria
 
+[![CI](https://github.com/Ren-reno/CrafTerraria/actions/workflows/ci.yml/badge.svg)](https://github.com/Ren-reno/CrafTerraria/actions/workflows/ci.yml)
+
 App web para consultar recetas de crafteo de Terraria. Proyecto de portafolio.
 
 > **Estado:** en diseño. La definición, los requisitos y la arquitectura están en [`docs/01-definicion-y-requisitos.md`](./docs/01-definicion-y-requisitos.md). La v1 será íntegramente en inglés (interfaz y nombres de ítems).
@@ -25,6 +27,17 @@ src/lib/         rarity.js (tier de rareza a nombre y color), format.js (precios
 src/styles/      tokens.css (paleta y colores de rareza, ver docs/01, "Sistema visual")
 src/pages/       Home (listado con búsqueda, categorías, orden y paginación), ItemDetail, CategoryView (redirección), NotFound
 ```
+
+## Publicación
+
+Es un sitio estático: `npm run build` genera la carpeta `dist/`, con los datos incluidos en el JavaScript (no necesita servidor propio). Se publica en [Vercel](https://vercel.com):
+
+1. En Vercel, **Add New → Project** e importa este repositorio. Detecta Vite sola: comando `npm run build` y carpeta `dist`.
+2. **Deploy.** Después, cada push a `main` publica una versión nueva, y cada pull request recibe su propia dirección de prueba.
+
+`vercel.json` hace que los enlaces directos (por ejemplo `/item/1`) abran la app en vez de dar un error 404. Mientras tanto, GitHub Actions corre las pruebas y la compilación en cada push (insignia de arriba).
+
+Este proyecto es **no comercial**: los datos son CC BY-NC-SA 4.0 y Terraria es de Re-Logic, así que el sitio publicado no debe llevar publicidad, donaciones ni cobros, y debe mantener la atribución del pie de página.
 
 ## Datos
 

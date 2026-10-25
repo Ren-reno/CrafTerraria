@@ -2,7 +2,7 @@
 
 > Nombre de la app: **CrafTerraria**. Barra superior con solo texto (sin ícono), definido el 2026-08-17.
 
-> Documento vivo. Se va completando a medida que avanza el proceso de desarrollo. Última actualización: 2026-10-22.
+> Documento vivo. Se va completando a medida que avanza el proceso de desarrollo. Última actualización: 2026-10-25.
 
 ## 1. Descripción del proyecto
 
@@ -216,6 +216,14 @@ Dirección: luz de antorcha cálida sobre una cueva oscura, con marcos de madera
 - **Categorías (RF05, RF06):** chips con desplazamiento horizontal en el móvil, que se reparten en varias líneas desde 960 px. La ruta antigua `/category/:name` redirige a `/?category=:name`.
 - **Sin menú hamburguesa (decidido el 2026-10-22):** el encabezado es solo el título. Ningún requisito le da función, las categorías ya son chips en el Home y la atribución está en el pie de página.
 
+### Publicación (decidido el 2026-10-25)
+
+- **Pública:** el sitio queda en una dirección de internet que cualquiera puede abrir, porque el objetivo es mostrarlo en el portafolio. Es independiente de que los repositorios sean públicos.
+- **Sitio estático en Vercel** (plan Hobby, pensado para uso personal no comercial). `npm run build` genera `dist/`; los datos viajan dentro del JavaScript, así que no hay servidor propio. `vercel.json` hace que un enlace directo como `/item/1` abra la app en vez de dar un error 404.
+- **Integración continua:** GitHub Actions corre las pruebas y la compilación en cada push y en cada pull request, con Node 20.19, 22 y 24 (`.github/workflows/ci.yml`).
+- **Uso no comercial:** los datos son CC BY-NC-SA 4.0 y el juego es de Re-Logic, así que el sitio no puede llevar publicidad, donaciones ni cobros. La atribución visible en el pie de la app es obligatoria.
+- **Privacidad:** la app no usa analítica ni cookies. Como los íconos se enlazan desde la wiki, el navegador de cada visitante se conecta a terraria.wiki.gg para pedirlos, y la wiki ve esas conexiones. Las tipografías se sirven desde la propia app.
+
 ### Validación contra requisitos funcionales
 
 | Requisito | Soportado por |
@@ -288,6 +296,8 @@ Sin confirmar todavía: la licencia exacta de un ícono de ítem puntual, la exi
 - [ ] Mockup de alta fidelidad de Detalle de ítem (móvil y desktop), heredando el mismo lenguaje visual
 - [x] Decidir origen de las imágenes: enlazar directo desde la wiki (2026-10-20), ver sección 8
 - [x] Implementar `getItemImageUrl()`, imagen de respaldo genérica, carga diferida y atribución en el pie de la app (2026-10-21)
+- [x] CI en GitHub Actions: pruebas y compilación con Node 20.19, 22 y 24 (2026-10-25)
+- [ ] Publicar el sitio en Vercel (la configuración ya está en `vercel.json`) y comprobar que un enlace directo como `/item/1` abre la app
 - [ ] Comprobar que los íconos cargan desde `localhost` y desde el dominio publicado (sin bloqueo de la wiki)
 - [ ] Antes de publicar: abrir la ficha de un archivo de ícono en la wiki (ej. `File:Iron Pickaxe.png`) y confirmar su plantilla de licencia
 - [ ] Buscar/crear texturas tileables genéricas (piedra, madera) optimizadas (.webp, comprimidas) para fondo — cuidando RNF01 (carga rápida)
@@ -333,3 +343,4 @@ Se generaron mockups de inspiración con IA (no assets finales) para definir dir
 | 2026-10-22 | **Sistema visual aprobado**: luz de antorcha sobre cueva oscura, marcos de madera, nombres de ítems pintados con el color de su rareza. Implementado: tokens CSS, fuentes autoalojadas, tarjetas, buscador con estado vacío y la pantalla de Detalle definitiva, responsive (móvil y desktop). 57 pruebas |
 | 2026-10-22 | **Home definitivo**: listado completo con búsqueda, chips de categoría, orden por nombre, rareza y daño (el daño solo donde aplica), y paginación de 30 ítems. Todo el estado vive en la URL. Decisión: las rarezas especiales y los ítems sin rareza van al final al ordenar por rareza. `/category/:name` pasa a ser una redirección. 95 pruebas |
 | 2026-10-22 | Se quita el menú hamburguesa de la v1: ningún requisito le da función, las categorías ya son chips en el Home y la atribución va en el pie. El encabezado queda solo con el título |
+| 2026-10-25 | **Publicación preparada**: sitio público y estático en Vercel, CI con GitHub Actions, favicon y descripción para compartir el enlace. Condición: uso no comercial y atribución visible (licencias de los datos y del juego). Pendiente: publicar y comprobar íconos y enlaces directos en el dominio real |
